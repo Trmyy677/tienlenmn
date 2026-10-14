@@ -1,0 +1,43 @@
+:root{--bg:#070910;--panel:#0e1220;--line:#1f2a4a;--cyan:#19e3ff;--pink:#ff3d8b;--text:#e8ecff;--muted:#7d89b0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:radial-gradient(1200px 600px at 50% -10%,#10204a 0%,var(--bg) 60%);color:var(--text);font-family:Rajdhani,sans-serif;font-size:18px}
+h1,h2,.code{font-family:'Chakra Petch',sans-serif}
+.hidden{display:none!important}.muted{color:var(--muted)}
+.screen{min-height:100%;display:flex;flex-direction:column}
+#lobby{flex-direction:row;flex-wrap:wrap;gap:24px;align-items:center;justify-content:center;padding:24px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:28px;width:min(420px,100%);box-shadow:0 0 40px #19e3ff12}
+.hero h1{font-size:54px;line-height:.95;margin:0 0 10px;letter-spacing:-1px;text-shadow:0 0 24px #19e3ff66}
+.sub{color:var(--muted);margin:0 0 22px}
+label{display:block;color:var(--muted);margin-bottom:14px}
+input{width:100%;margin-top:6px;background:#080b16;border:1px solid var(--line);color:var(--text);padding:12px;border-radius:4px;font:inherit;font-size:20px}
+input:focus,.btn:focus-visible,.card:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.join{display:flex;gap:8px;margin-top:14px}.join input{margin:0;text-transform:uppercase;letter-spacing:4px;text-align:center}
+.btn{background:#121936;color:var(--text);border:1px solid var(--line);padding:12px 20px;border-radius:4px;font:600 18px Rajdhani;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--cyan)}.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.primary{background:linear-gradient(135deg,var(--cyan),#3a7bff);color:#041018;border:0;width:auto}
+#create{width:100%}.btn.small{padding:6px 12px;font-size:16px}
+.board h2{margin:0 0 12px;font-size:20px}.board ol{margin:0;padding-left:22px}.board li{padding:4px 0}.board b{color:var(--cyan)}
+header{display:flex;align-items:center;gap:16px;padding:12px 18px;border-bottom:1px solid var(--line)}
+header #status{flex:1;color:var(--muted)}
+.code{background:#080b16;color:var(--cyan);border:1px dashed var(--cyan);padding:6px 14px;font-size:20px;letter-spacing:5px;cursor:pointer;border-radius:4px}
+#timer{height:3px;background:var(--line)}#timer i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--cyan))}
+main{flex:1;display:grid;grid-template:"l t r" auto "l c r" 1fr/150px 1fr 150px;gap:10px;padding:14px;min-height:260px}
+#seat-top{grid-area:t;justify-self:center}#seat-left{grid-area:l;align-self:center}#seat-right{grid-area:r;align-self:center}
+#center{grid-area:c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.seat{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 14px;min-width:130px;text-align:center}
+.seat:empty{visibility:hidden}.seat.turn,#me.turn{border-color:var(--pink);box-shadow:0 0 18px #ff3d8b66}
+.seat .n{font:700 18px 'Chakra Petch'}.seat .c{font-size:30px;font-weight:700;color:var(--cyan)}.seat .s{font-size:14px;color:var(--muted)}.off{opacity:.45}
+.tag{color:var(--pink);font-size:14px}
+.cards{display:flex;justify-content:center}.card{width:52px;height:74px;border-radius:6px;background:#f4f6ff;color:#0a0f1f;border:1px solid #9aa6d4;margin-left:-14px;display:flex;flex-direction:column;align-items:flex-start;padding:5px 6px;font:700 20px 'Chakra Petch';line-height:1;cursor:default;box-shadow:0 2px 8px #0008}
+.card:first-child{margin-left:0}.card.red{color:#e11d48}.card small{font-size:18px;margin-top:2px}
+#hand .card{cursor:pointer;margin-left:-18px;width:60px;height:86px;transition:transform .12s}
+#hand .card.sel{transform:translateY(-18px);border-color:var(--cyan);box-shadow:0 0 14px var(--cyan)}
+footer{padding:12px 14px 20px;display:flex;flex-direction:column;align-items:center;gap:12px}
+#me{padding:6px 16px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+#hand{display:flex;justify-content:center;padding-top:20px;max-width:100%;overflow-x:auto;overflow-y:hidden;padding-left:18px}
+.actions{display:flex;gap:10px}
+.result{font:700 26px 'Chakra Petch';color:var(--cyan)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--pink);color:#fff;padding:10px 18px;border-radius:4px;opacity:0;transition:opacity .2s;pointer-events:none;font-weight:600}
+#toast.show{opacity:1}
+@media(max-width:700px){main{grid-template:"t t" auto "l r" auto "c c" 1fr/1fr 1fr}.seat{min-width:0}.hero h1{font-size:42px}.card{width:42px;height:60px;font-size:16px}#hand .card{width:48px;height:70px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
