@@ -41,3 +41,47 @@ footer{padding:12px 14px 20px;display:flex;flex-direction:column;align-items:cen
 #toast.show{opacity:1}
 @media(max-width:700px){main{grid-template:"t t" auto "l r" auto "c c" 1fr/1fr 1fr}.seat{min-width:0}.hero h1{font-size:42px}.card{width:42px;height:60px;font-size:16px}#hand .card{width:48px;height:70px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== v2: bài to, lịch sử lượt, thanh thứ tự, animation ===== */
+.card{width:72px;height:104px;font-size:28px;border-radius:9px;padding:7px 9px;margin-left:-22px}
+.card small{font-size:.95em}
+#hand{padding-top:38px;justify-content:safe center}
+#hand .card{width:96px;height:138px;font-size:36px;margin-left:-38px;transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s}
+#hand .card:first-child{margin-left:0}
+#hand .card:hover{transform:translateY(-10px)}
+#hand .card.sel{transform:translateY(-32px)}
+#hand .card.deal{animation:deal .55s calc(var(--i) * 45ms) backwards cubic-bezier(.2,.9,.25,1)}
+.seat,#me,.chip{transition:border-color .3s,box-shadow .3s,opacity .3s,background .3s}
+.no{display:inline-grid;place-items:center;width:22px;height:22px;margin-right:6px;border-radius:50%;background:var(--line);color:var(--cyan);font:700 13px 'Chakra Petch'}
+#timer i{transition:width .25s linear}
+main{min-height:380px}
+#order{display:flex;align-items:center;gap:14px;padding:8px 18px;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
+#order .dir{color:var(--cyan);font-weight:700}#order #plays{color:var(--muted)}
+#chips{display:flex;align-items:center;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:20px;color:var(--muted)}
+.chip em{font:700 13px 'Chakra Petch';font-style:normal;color:var(--cyan)}.chip b{color:var(--text);min-width:12px}
+.chip.next{border-style:dashed;border-color:var(--cyan);color:var(--text)}
+.chip.turn{border-color:var(--pink);color:#fff;background:#ff3d8b22;box-shadow:0 0 14px #ff3d8b66}
+.chip.pass{text-decoration:line-through;opacity:.5}.chip.off{opacity:.35}.arr{color:var(--muted);font-style:normal}
+#me.turn{animation:pulse 1.4s ease-in-out infinite}
+#pile{display:flex;align-items:flex-end;justify-content:center;flex-wrap:wrap;gap:8px 24px;min-height:160px}
+#hint{color:var(--muted);min-height:48px}.result{margin-bottom:6px}
+.grp{display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .45s}
+.grp .card{transition:width .45s,height .45s,font-size .45s,margin .45s}
+.grp .who{font-size:15px;color:var(--muted)}
+.grp[data-age] .card{width:54px;height:78px;font-size:20px;margin-left:-22px}
+.grp[data-age] .card:first-child{margin-left:0}
+.grp[data-age="0"] .card{width:100px;height:144px;font-size:38px;margin-left:-38px}
+.grp[data-age="0"] .who{color:var(--cyan);font-weight:700;font-size:17px}
+.grp[data-age="1"]{opacity:.6}.grp[data-age="2"]{opacity:.42}.grp[data-age="3"]{opacity:.28}.grp[data-age="4"]{opacity:.18}
+.grp.out{opacity:0!important}
+.in-bottom{animation:inb .5s cubic-bezier(.2,.9,.25,1)}.in-top{animation:int .5s cubic-bezier(.2,.9,.25,1)}
+.in-left{animation:inl .5s cubic-bezier(.2,.9,.25,1)}.in-right{animation:inr .5s cubic-bezier(.2,.9,.25,1)}
+@keyframes inb{from{opacity:0;transform:translateY(190px) scale(.8)}}
+@keyframes int{from{opacity:0;transform:translateY(-190px) scale(.8)}}
+@keyframes inl{from{opacity:0;transform:translateX(-300px) scale(.8)}}
+@keyframes inr{from{opacity:0;transform:translateX(300px) scale(.8)}}
+@keyframes deal{from{opacity:0;transform:translateY(-140px) rotate(-8deg)}}
+@keyframes pulse{50%{box-shadow:0 0 28px #ff3d8bcc}}
+@media(max-width:700px){#hand .card{width:62px;height:90px;font-size:24px;margin-left:-26px}.grp[data-age="0"] .card{width:72px;height:104px;font-size:28px}.grp[data-age] .card{width:40px;height:58px;font-size:15px;margin-left:-16px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

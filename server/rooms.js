@@ -15,7 +15,7 @@ function createRoom(notify, persist) {
   const room = {
     code: newCode(), players: [], hostPid: null, phase: 'lobby', turn: 0, table: null, lastBy: 0,
     passed: new Set(), mustSpade3: false, firstGame: true, lastWinnerPid: null, result: null,
-    timer: null, deadline: 0, updated: Date.now(), notify, persist,
+    timer: null, deadline: 0, log: [], seq: 0, plays: 0, updated: Date.now(), notify, persist,
   };
   rooms.set(room.code, room);
   return room;
@@ -41,7 +41,7 @@ function view(room, pid) {
     table: room.table ? { cards: room.table.cards, by: room.table.by } : null,
     turn: playing ? room.players[room.turn].pid : null,
     ttl: playing ? Math.max(0, room.deadline - Date.now()) : 0,
-    mustSpade3: room.mustSpade3, result: room.result,
+    mustSpade3: room.mustSpade3, result: room.result, log: room.log, plays: room.plays,
   };
 }
 
@@ -74,7 +74,7 @@ function startGame(room, pid) {
     room.mustSpade3 = false;
   }
   room.firstGame = false; room.phase = 'playing'; room.table = null; room.passed = new Set();
-  room.lastBy = room.turn; room.result = null;
+  room.lastBy = room.turn; room.result = null; room.log = []; room.plays = 0;
   startTurn(room);
   return null;
 }
@@ -92,6 +92,8 @@ function play(room, pid, cards) {
   p.hand = p.hand.filter((c) => !cards.includes(c));
   room.table = { cards: [...cards].sort((x, y) => x - y), a, by: pid };
   room.lastBy = i; room.mustSpade3 = false;
+  room.log.push({ id: ++room.seq, by: pid, cards: room.table.cards }); room.plays++;
+  if (room.log.length > 5) room.log.shift();
   if (!p.hand.length) return endGame(room, i);
   advance(room);
   return null;
