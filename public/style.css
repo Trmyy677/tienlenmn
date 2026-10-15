@@ -123,3 +123,12 @@ select{width:100%;margin-top:6px;background:#080b16;border:1px solid var(--line)
 .rules{margin:0;padding-left:20px;color:var(--muted);font-size:16px;line-height:1.35}.rules li{margin-bottom:4px}
 @keyframes fade{from{opacity:0}}@keyframes pop{from{opacity:0;transform:scale(.9)}}
 @media(max-width:700px){#topbar{position:static;width:100%;justify-content:center;margin-bottom:6px}.days{grid-template-columns:repeat(4,1fr)}.stats{grid-template-columns:1fr}}
+
+/* ===== v4.1: lá đánh được luôn nổi lên trên lá bị xám ===== */
+#hand{padding-bottom:14px}
+#hand .card{position:relative;z-index:1}
+#hand .card.dim{z-index:0;transform:translateY(12px)}
+#hand .card.dim:hover{transform:translateY(12px)}
+#hand .card.ok{z-index:2}
+#hand .card.sel{z-index:3}
+#hand .card:hover{z-index:4}
