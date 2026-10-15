@@ -132,3 +132,11 @@ select{width:100%;margin-top:6px;background:#080b16;border:1px solid var(--line)
 #hand .card.ok{z-index:2}
 #hand .card.sel{z-index:3}
 #hand .card:hover{z-index:4}
+
+/* ===== v4.2: lá đánh được nhô lên, lá xám hạ xuống và nằm dưới ===== */
+#hand .card.ok{transform:translateY(-16px);z-index:2}
+#hand .card.ok:hover{transform:translateY(-26px)}
+#hand .card.dim{transform:translateY(14px);z-index:0}
+#hand .card.dim:hover{transform:translateY(14px);z-index:0}
+#hand .card.sel,#hand .card.sel:hover{transform:translateY(-34px);z-index:5}
+.rc{display:flex;gap:8px;align-items:center}.rc code{flex:1;background:#080b16;border:1px solid var(--line);border-radius:4px;padding:8px;font-size:14px;word-break:break-all;color:var(--cyan)}

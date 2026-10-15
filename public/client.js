@@ -169,7 +169,7 @@ function setMe(p) {
 }
 function loadMe() {
   const n = (localStorage.tl_nick || $('#nick').value || '').trim(); if (n.length < 2) return;
-  socket.emit('me', { token, nick: n }, (r) => { if (r && r.profile) { setMe(r.profile); if (!autoShown && r.profile.checkin.canClaim && !st) { autoShown = true; openCheckin(); } } });
+  socket.emit('me', { token, nick: n }, (r) => { if (r && r.profile) { setMe(r.profile); setTimeout(loadLb, 700); if (!autoShown && r.profile.checkin.canClaim && !st) { autoShown = true; openCheckin(); } } });
 }
 socket.on('connect', loadMe);
 $('#nick').addEventListener('change', () => { const n = $('#nick').value.trim(); if (n.length >= 2) { localStorage.tl_nick = n; loadMe(); } });
@@ -201,13 +201,27 @@ function openProfile() {
     <li>Thối heo: heo đen ${P.heoDen}, heo đỏ ${P.heoDo} cược mỗi con</li>
     <li>Chặt heo: người chặt nhận đúng giá trị heo bị chặt (đôi heo = cộng hai con), cộng ngay trong ván</li>
     <li>Chặt đè: 3 đôi thông &lt; tứ quý &lt; 4 đôi thông. Người chặt đè nhận ${P.bomb[1]} / ${P.bomb[2]} / ${P.bomb[3]} cược (theo bom bị đè) và lấy luôn tiền người bị đè vừa chặt được</li>
-    <li>Cần ít nhất 20 × mức cược để vào bàn. Không bao giờ âm coin.</li></ul>`);
+    <li>Cần ít nhất 20 × mức cược để vào bàn. Không bao giờ âm coin.</li></ul>
+    <h3>Mã khôi phục tài khoản</h3><p class="muted">Lưu mã này để dùng lại coin và thống kê khi đổi thiết bị hoặc đổi địa chỉ web. Ai có mã là dùng được hồ sơ của bạn, đừng chia sẻ.</p>
+    <div class="rc"><code>${token}</code><button id="rcc" class="btn small">Sao chép</button></div>`);
+  $('#rcc').onclick = () => { navigator.clipboard?.writeText(token); toast('Đã sao chép mã khôi phục'); };
 }
 $('#btn-checkin').onclick = () => openCheckin();
 $('#btn-profile').onclick = openProfile;
 
 async function loadLb() {
   try { const d = await (await fetch('/api/leaderboard')).json();
-    if (d.length) $('#lb').innerHTML = d.map((r) => `<li>${esc(r.nickname)} <b>🪙 ${fmt(r.coins)}</b> <span class="muted">(${r.wins}/${r.games} thắng)</span></li>`).join(''); } catch {}
+    $('#lb').innerHTML = d.length ? d.map((r, i) => `<li>${esc(r.nickname)} <b>🪙 ${fmt(r.coins)}</b> <span class="muted">(${r.wins}/${r.games} thắng)</span></li>`).join('') : '<li class="muted">Chưa có ai, hãy vào chơi để lên bảng</li>'; } catch {}
 }
-loadLb();
+loadLb(); setInterval(() => { if (!st) loadLb(); }, 30000);
+
+function openRestore() {
+  modal(`<h2>Khôi phục tài khoản</h2><p class="muted">Dán mã khôi phục từ thiết bị hoặc địa chỉ web cũ (lấy ở Hồ sơ) để dùng lại coin và thống kê. Hồ sơ hiện tại trên trình duyệt này sẽ được thay thế.</p>
+    <input id="rcode" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off" spellcheck="false"><br><br><button id="rgo" class="btn primary">Khôi phục</button>`);
+  $('#rgo').onclick = () => {
+    const c = $('#rcode').value.trim().toLowerCase();
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(c)) return toast('Mã không hợp lệ');
+    localStorage.tl_token = c; localStorage.removeItem('tl_code'); location.reload();
+  };
+}
+$('#btn-restore').onclick = openRestore;

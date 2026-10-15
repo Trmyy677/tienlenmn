@@ -53,7 +53,9 @@ function pub(p) {
 }
 
 async function leaderboard() {
-  if (db) { const { data } = await db.from('profiles').select('nickname,coins,wins,games').order('coins', { ascending: false }).limit(10); return data || []; }
+  if (db) { const { data, error } = await db.from('profiles').select('nickname,coins,wins,games').order('coins', { ascending: false }).limit(10);
+    if (error) console.error('Đọc bảng xếp hạng lỗi (đã chạy schema.sql chưa?):', error.message);
+    return data || []; }
   return [...cache.values()].sort((a, b) => b.coins - a.coins).slice(0, 10).map(({ nickname, coins, wins, games }) => ({ nickname, coins, wins, games }));
 }
 
