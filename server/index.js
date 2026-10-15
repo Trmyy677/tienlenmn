@@ -3,6 +3,7 @@ const http = require('http');
 const express = require('express');
 const { Server } = require('socket.io');
 const R = require('./rooms');
+const P = require('./profiles');
 
 const app = express();
 const server = http.createServer(app);
@@ -11,50 +12,46 @@ const io = new Server(server, { pingInterval: 10000, pingTimeout: 8000 });
 let supabase = null;
 if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
   supabase = require('@supabase/supabase-js').createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  P.init(supabase);
 }
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.get('/health', (_q, r) => r.send('ok'));
-app.get('/api/leaderboard', async (_q, r) => {
-  if (!supabase) return r.json([]);
-  const { data, error } = await supabase.from('leaderboard').select('*').limit(10);
-  r.json(error ? [] : data);
-});
+app.get('/api/leaderboard', async (_q, r) => { try { r.json(await P.leaderboard()); } catch { r.json([]); } });
 
 function broadcast(room) {
   room.updated = Date.now();
   for (const p of room.players) if (p.sid) io.to(p.sid).emit('state', R.view(room, p.pid));
 }
 
-async function persist(room, wi, left, pot) {
+async function persist(room, wi, players) {
   if (!supabase) return;
   try {
     const { data, error } = await supabase.from('matches')
-      .insert({ room_code: room.code, player_count: room.players.length, winner_nick: room.players[wi].nick })
-      .select('id').single();
+      .insert({ room_code: room.code, player_count: room.players.length, winner_nick: room.players[wi].nick, bet: room.bet }).select('id').single();
     if (error) throw error;
-    await supabase.from('match_players').insert(left.map((x, i) => ({
-      match_id: data.id, nickname: x.nick, cards_left: x.left, is_winner: i === wi, score: i === wi ? pot : -x.left,
-    })));
+    await supabase.from('match_players').insert(players.map((x, i) => ({ match_id: data.id, nickname: x.nick, cards_left: x.left, is_winner: i === wi, score: x.delta })));
   } catch (e) { console.error('Supabase persist lỗi:', e.message || e); }
 }
 
 const clean = (s) => String(s || '').replace(/[<>\n\r]/g, '').trim().slice(0, 16);
-const mk = () => R.createRoom(broadcast, persist);
 
 io.on('connection', (s) => {
   const bind = (room, p) => { p.sid = s.id; p.connected = true; s.data = { code: room.code, pid: p.pid }; };
   const ctx = () => { const room = R.rooms.get(s.data.code); return room ? { room, pid: s.data.pid } : null; };
   const done = (cb) => (typeof cb === 'function' ? cb : () => {});
 
-  s.on('create', ({ nick, token }, cb) => {
+  s.on('create', async ({ nick, token, bet }, cb) => {
     cb = done(cb); nick = clean(nick);
     if (nick.length < 2 || !token) return cb({ error: 'Nickname cần 2–16 ký tự' });
-    const room = mk(); bind(room, R.addPlayer(room, token, nick));
+    bet = R.BETS.includes(+bet) ? +bet : 0;
+    const prof = await P.get(token, nick);
+    if (prof.coins < bet * R.MIN_X) return cb({ error: `Mức cược ${bet} cần ít nhất ${bet * R.MIN_X} coin (bạn có ${prof.coins})` });
+    const room = R.createRoom(broadcast, persist, bet); bind(room, R.addPlayer(room, token, nick, prof));
     cb({ ok: true }); broadcast(room);
   });
 
-  s.on('join', ({ code, nick, token }, cb) => {
+  s.on('join', async ({ code, nick, token }, cb) => {
     cb = done(cb); nick = clean(nick);
     if (nick.length < 2 || !token) return cb({ error: 'Nickname cần 2–16 ký tự' });
     const room = R.rooms.get(String(code || '').trim().toUpperCase());
@@ -64,9 +61,25 @@ io.on('connection', (s) => {
       if (room.phase === 'playing') return cb({ error: 'Phòng đang chơi, chờ hết ván' });
       if (room.players.length >= 4) return cb({ error: 'Phòng đã đủ 4 người' });
       if (room.players.some((x) => x.nick.toLowerCase() === nick.toLowerCase())) return cb({ error: 'Nickname đã có người dùng trong phòng' });
-      p = R.addPlayer(room, token, nick);
+      const prof = await P.get(token, nick);
+      if (prof.coins < room.bet * R.MIN_X) return cb({ error: `Phòng cược ${room.bet} cần ít nhất ${room.bet * R.MIN_X} coin (bạn có ${prof.coins})` });
+      p = R.addPlayer(room, token, nick, prof);
     }
     bind(room, p); cb({ ok: true }); broadcast(room);
+  });
+
+  s.on('me', async ({ token, nick }, cb) => {
+    cb = done(cb); nick = clean(nick);
+    if (nick.length < 2 || !token) return cb({ error: 'Nickname cần 2–16 ký tự' });
+    cb({ ok: true, profile: P.pub(await P.get(token, nick)) });
+  });
+  s.on('checkin', async ({ token, nick }, cb) => {
+    cb = done(cb); nick = clean(nick);
+    if (nick.length < 2 || !token) return cb({ error: 'Nickname cần 2–16 ký tự' });
+    const prof = await P.get(token, nick), r = P.checkin(prof);
+    if (r.error) return cb(r);
+    P.save(prof); cb({ ok: true, reward: r.reward, day: r.day, profile: P.pub(prof) });
+    const c = ctx(); if (c) broadcast(c.room);
   });
 
   const act = (fn) => (data, cb) => {

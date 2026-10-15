@@ -9,36 +9,41 @@
 </head>
 <body>
 <section id="lobby" class="screen">
+  <div id="topbar"><span id="coinbox">🪙 <b id="coins">–</b></span><button id="btn-checkin" class="btn small">Điểm danh</button><button id="btn-profile" class="btn small">Hồ sơ</button></div>
   <div class="panel hero">
     <h1>Tiến Lên<br>Online</h1>
     <p class="sub">Tạo phòng, gửi mã cho bạn bè, chơi ngay. Không cần tài khoản.</p>
     <label>Nickname<input id="nick" maxlength="16" placeholder="Tên hiển thị" autocomplete="off"></label>
+    <label>Mức cược (coin / lá)<select id="bet"><option value="0">Chơi vui (không coin)</option><option value="10">10</option><option value="50">50</option><option value="100">100</option><option value="500">500</option></select></label>
     <button id="create" class="btn primary">Tạo phòng</button>
     <div class="join"><input id="code" maxlength="5" placeholder="MÃ PHÒNG"><button id="join" class="btn">Vào phòng</button></div>
   </div>
-  <div class="panel board"><h2>Bảng xếp hạng</h2><ol id="lb"><li class="muted">Chưa có dữ liệu</li></ol></div>
+  <div class="panel board"><h2>Đại gia coin</h2><ol id="lb"><li class="muted">Chưa có dữ liệu</li></ol></div>
 </section>
 
 <section id="game" class="screen hidden">
   <header>
     <button id="copy" class="code" title="Sao chép mã phòng"></button>
-    <span id="status"></span>
+    <span id="betbox" class="bet"></span><span id="status"></span>
     <button id="leave" class="btn small">Rời phòng</button>
   </header>
   <div id="order"><span class="dir">↻ Chiều kim đồng hồ</span><span id="plays"></span><div id="chips"></div></div>
   <div id="timer"><i></i></div>
   <main>
     <div id="seat-top" class="seat"></div><div id="seat-left" class="seat"></div><div id="seat-right" class="seat"></div>
-    <div id="center"><div id="pile"></div><div id="hint"></div></div>
+    <div id="center"><div id="pile"></div><div id="hint"></div><div id="feed"></div></div>
   </main>
   <footer>
     <div id="me"></div>
+    <div id="sugg"></div>
     <div id="hand"></div>
-    <div class="actions"><button id="pass" class="btn">Bỏ lượt</button><button id="play" class="btn primary">Đánh bài</button><button id="start" class="btn primary hidden">Bắt đầu</button></div>
+    <div class="actions"><button id="sort" class="btn"></button><button id="hintbtn" class="btn">Gợi ý</button><button id="pass" class="btn">Bỏ lượt</button><button id="play" class="btn primary">Đánh bài</button><button id="start" class="btn primary hidden">Bắt đầu</button></div>
   </footer>
 </section>
+<div id="modal" class="hidden"><div class="sheet"><button id="mclose" class="btn small" aria-label="Đóng">✕</button><div id="mbody"></div></div></div>
 <div id="toast"></div>
 <script src="/socket.io/socket.io.js"></script>
+<script src="rules.js"></script>
 <script src="client.js"></script>
 </body>
 </html>

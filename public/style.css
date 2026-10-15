@@ -85,3 +85,41 @@ main{min-height:380px}
 @keyframes pulse{50%{box-shadow:0 0 28px #ff3d8bcc}}
 @media(max-width:700px){#hand .card{width:62px;height:90px;font-size:24px;margin-left:-26px}.grp[data-age="0"] .card{width:72px;height:104px;font-size:28px}.grp[data-age] .card{width:40px;height:58px;font-size:15px;margin-left:-16px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== v3: gợi ý, sắp bài ===== */
+#hand .card{transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,filter .25s,border-color .2s}
+#hand .card.ok{border-color:var(--cyan);box-shadow:0 0 0 2px var(--cyan),0 0 18px #19e3ffaa}
+#hand .card.dim{filter:brightness(.5) saturate(.5)}
+#hand .card.sel{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink),0 0 22px #ff3d8bcc;filter:none}
+#sugg{display:flex;gap:8px;max-width:100%;overflow-x:auto;padding:4px 8px;min-height:44px;align-items:center}
+.sg{flex:none;background:#0b1630;color:var(--text);border:1px solid var(--cyan);border-radius:20px;padding:5px 12px;font:600 16px Rajdhani;cursor:pointer;display:flex;gap:8px;align-items:center;transition:background .2s,box-shadow .2s}
+.sg b{color:var(--cyan)}.sg span{color:#cfd6ff}.sg span.red{color:#ff6b8f}
+.sg:hover,.sg.on{background:#19e3ff26;box-shadow:0 0 14px #19e3ff66}.sg.on{border-color:var(--pink)}
+#sugg .none{color:var(--pink)}
+.actions{flex-wrap:wrap;justify-content:center}
+
+/* ===== v4: coin, điểm danh, hồ sơ ===== */
+select{width:100%;margin-top:6px;background:#080b16;border:1px solid var(--line);color:var(--text);padding:12px;border-radius:4px;font:inherit;font-size:20px}
+#topbar{position:fixed;top:12px;right:16px;display:flex;gap:8px;align-items:center;z-index:5}
+#coinbox{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:4px 14px;font:700 18px 'Chakra Petch';color:#ffd166}
+.btn.dot{position:relative}.btn.dot::after{content:'';position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:var(--pink);box-shadow:0 0 8px var(--pink)}
+.bet{color:#ffd166;font:700 16px 'Chakra Petch'}
+.dl{font:700 15px 'Chakra Petch'}.dl.up{color:#3dff9a}.dl.dn{color:var(--pink)}
+#feed{display:flex;flex-direction:column;gap:4px;min-height:20px;font-size:17px}
+.fi{color:#ffd166}.fi.new{animation:feedin .5s cubic-bezier(.2,.9,.25,1)}
+@keyframes feedin{from{opacity:0;transform:translateY(10px) scale(.96)}}
+.rrow{display:flex;justify-content:space-between;gap:20px;min-width:260px;padding:3px 0;color:var(--muted);font-size:17px}.rrow.win{color:var(--text);font-weight:700}
+#modal{position:fixed;inset:0;background:#000a;display:grid;place-items:center;z-index:20;padding:16px;animation:fade .2s}
+.sheet{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:26px;width:min(560px,100%);max-height:90vh;overflow:auto;box-shadow:0 0 50px #19e3ff22;animation:pop .25s cubic-bezier(.2,.9,.25,1)}
+#mclose{position:absolute;top:10px;right:10px}
+.sheet h2{margin:0 0 8px;font-size:24px}.sheet h3{font-size:17px;margin:18px 0 6px;color:var(--cyan)}.coin{color:#ffd166;font-size:20px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:16px 0}
+.day{background:#080b16;border:1px solid var(--line);border-radius:6px;padding:8px 2px;text-align:center;display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.day b{color:#ffd166;font-size:13px}.day i{font-style:normal;font-size:18px}
+.day.done{border-color:#3dff9a88;color:#3dff9a}.day.today{border-color:var(--pink);box-shadow:0 0 14px #ff3d8b66;animation:pulse 1.4s ease-in-out infinite}
+.reward{text-align:center;font:700 34px 'Chakra Petch';color:#ffd166;margin:10px 0;animation:pop .5s cubic-bezier(.2,.9,.25,1);text-shadow:0 0 22px #ffd16688}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 18px;margin-top:12px}
+.stats div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 0;color:var(--muted)}.stats b{color:var(--text)}
+.rules{margin:0;padding-left:20px;color:var(--muted);font-size:16px;line-height:1.35}.rules li{margin-bottom:4px}
+@keyframes fade{from{opacity:0}}@keyframes pop{from{opacity:0;transform:scale(.9)}}
+@media(max-width:700px){#topbar{position:static;width:100%;justify-content:center;margin-bottom:6px}.days{grid-template-columns:repeat(4,1fr)}.stats{grid-template-columns:1fr}}

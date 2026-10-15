@@ -56,3 +56,11 @@ public/           giao diện dark esports (HTML/CSS/JS thuần)
 supabase/schema.sql   bảng matches, match_players, view leaderboard
 render.yaml       blueprint deploy
 ```
+
+## Coin, điểm danh, thống kê (v4)
+- Mỗi thiết bị có hồ sơ ẩn danh (khoá = SHA-256 của token trong trình duyệt), tặng sẵn 1.000 coin. Hồ sơ gồm số ván, thắng/thua, chuỗi thắng, cóng, chặt heo, bị chặt heo, chặt đè, coin thắng/thua.
+- Điểm danh 7 ngày theo giờ Việt Nam: 100–400 coin ngẫu nhiên, ngày 7 nhận 300–400, bỏ lỡ một ngày thì về ngày 1.
+- Phòng chọn mức cược 0 (chơi vui) / 10 / 50 / 100 / 500 coin mỗi lá. Cần ≥ 20 × mức cược để vào bàn; coin không bao giờ âm.
+- Thối bài: 1 cược/lá, cóng ×2, thối heo (đen 2, đỏ 4). Chặt heo cộng ngay vào ván. Chặt đè: 3 đôi thông < tứ quý < 4 đôi thông; người chặt đè lấy luôn tiền người bị đè vừa chặt.
+- Chỉnh các con số ở `PAY` trong `public/rules.js`.
+- **Cần chạy lại `supabase/schema.sql`** (an toàn khi chạy lại) để tạo bảng `profiles` và cột `bet`.
